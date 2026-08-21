@@ -2,11 +2,13 @@
 
 ## Scope
 
-This file applies to the entire repository. The product requirements and MVP architecture are
-defined in `DCL_MVP_Handoff.md` until superseded by checked-in implementation documentation.
+This file applies to the entire repository and should remain valid as the compliance-form product
+evolves from its initial design into a maintained system.
 
-Follow the user's current request first, then these repository rules. Establish the active branch,
-worktree state, and current implementation before interpreting or changing behavior.
+Follow the user's current request first, then these repository rules. Treat the current code,
+tests, configuration, and maintained documentation as the best evidence of implemented behavior.
+Planning and handoff documents, including `DCL_MVP_Handoff.md`, are contextual inputs rather than
+permanent authorities; use them when relevant and reconcile them with newer requirements and code.
 
 ## Start Every Task With Context
 
@@ -14,8 +16,8 @@ worktree state, and current implementation before interpreting or changing behav
 - Inspect `git status --short --branch`, the current commit, and relevant branch divergence.
 - Preserve unrelated tracked changes and untracked files. Never clean, reset, overwrite, format,
   stage, or move user work merely to obtain a clean tree.
-- Read `DCL_MVP_Handoff.md` and the current branch's README, project configuration, CI workflow,
-  implementation, and tests relevant to the task.
+- Read the current branch's README, project configuration, CI workflow, implementation, tests, and
+  maintained design documentation relevant to the task.
 - Prefer `git ls-files`, `git grep`, and searches scoped to relevant directories. Avoid scanning
   virtual environments, build output, caches, downloaded runtimes, and dependency trees.
 
@@ -46,22 +48,23 @@ worktree state, and current implementation before interpreting or changing behav
 
 ## Architecture and Product Boundaries
 
-- Treat `DCL_MVP_Handoff.md` as the architecture and scope baseline. Implement the defined MVP
-  before adding deferred features or generic frameworks.
-- Keep frontend presentation, API and domain logic, PostgreSQL persistence, authentication and
-  authorization, DataHub integration, publication state, and audit reporting as separate concerns.
-- Derive and validate compliance rules on the server. Do not rely on browser-only enforcement for
-  authorization, workflow transitions, or derived values.
-- Treat malformed input, failed persistence, authorization errors, and failed DataHub reads or
+- Base architecture decisions on current requirements and repository evidence. Record material
+  decisions in maintained documentation when they affect future implementation work.
+- Keep presentation, domain logic, persistence, authentication and authorization, external
+  integrations, and operational reporting as separate concerns.
+- Enforce validation, authorization, state transitions, and derived business rules at the trusted
+  application boundary rather than relying only on client behavior.
+- Treat malformed input, failed persistence, authorization errors, and failed external reads or
   writes as likely, high-impact failures. Handle them clearly without elaborate recovery systems.
-- Preserve workflow invariants, optimistic locking, immutable submission revisions, idempotent
-  publication state, and auditable state transitions described in the handoff.
+- Preserve documented domain invariants, concurrency controls, auditability, and idempotency where
+  the product requires them.
 
 ## Security and Sensitive Data
 
-- Never commit credentials, access tokens, database passwords, OIDC client secrets, resolved
-  secrets, sensitive form submissions, or production data.
-- Keep the DataHub publisher token backend-only and use the narrowest practical service identity.
+- Never commit credentials, access tokens, database passwords, client secrets, resolved secrets,
+  sensitive form submissions, or production data.
+- Keep privileged credentials outside client applications and use the narrowest practical service
+  identity.
 - Do not log access tokens or full sensitive free-text values.
 - Use environment-variable placeholders and the approved secret-management mechanism.
 
@@ -71,7 +74,7 @@ worktree state, and current implementation before interpreting or changing behav
   selection, then run the repository's complete configured gates before handing off behavioral
   changes.
 - Use representative fixtures and fakes for fast feedback, but do not treat mocked tests as final
-  proof for persistence, authorization, workflow, or DataHub publication behavior.
+  proof for persistence, authorization, workflow, or external-integration behavior.
 - Validate affected end-to-end paths against configured local integration services when available.
   Report exactly which layer could not be checked and what was verified instead.
 - Test likely and high-impact failures proportionately. Do not inflate the test suite with obscure
