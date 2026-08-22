@@ -1,0 +1,25 @@
+{
+  "fixtureOnly": true,
+  "formKey": "dcl.edw.database.fixture",
+  "revision": 1,
+  "displayName": "DCL EDW Database Compliance — Fixture",
+  "fields": [
+    {
+      "key": "disposalClass",
+      "editable": true,
+      "allowedValues": [
+        "TEST_CLASS_A",
+        "TEST_CLASS_B"
+      ]
+    },
+    {
+      "key": "disposalAction",
+      "editable": false,
+      "derivedFrom": "disposalClass"
+    }
+  ],
+  "disposalActionByClass": {
+    "TEST_CLASS_A": "TEST_ACTION_A",
+    "TEST_CLASS_B": "TEST_ACTION_B"
+  }
+}
