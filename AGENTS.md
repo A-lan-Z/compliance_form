@@ -1,14 +1,14 @@
-# Compliance Form Project Agent Guide
+# DataHub Tag-to-Form Action Agent Guide
 
 ## Scope
 
-This file applies to the entire repository and should remain valid as the compliance-form product
-evolves from its initial design into a maintained system.
+This file applies to the entire repository, which contains the standalone DataHub tag-to-form
+Action.
 
 Follow the user's current request first, then these repository rules. Treat the current code,
 tests, configuration, and maintained documentation as the best evidence of implemented behavior.
-Planning and handoff documents, including `DCL_MVP_Handoff.md`, are contextual inputs rather than
-permanent authorities; use them when relevant and reconcile them with newer requirements and code.
+The maintained README, DESIGN, and VERIFICATION documents describe the current Action.
+Historical commits describe the previous application and are not the current product contract.
 
 ## Start Every Task With Context
 

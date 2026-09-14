@@ -1,0 +1,27 @@
+name: "dcl-tag-form-assignment"
+options:
+  failure_mode: "THROW"
+source:
+  type: "kafka"
+  config:
+    connection:
+      consumer_config:
+        auto.offset.reset: earliest
+      bootstrap: ${KAFKA_BOOTSTRAP_SERVER:-127.0.0.1:9092}
+      schema_registry_url: ${SCHEMA_REGISTRY_URL:-http://127.0.0.1:8080/schema-registry/api/}
+    topic_routes:
+      mcl: ${METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME:-MetadataChangeLog_Versioned_v1}
+      pe: ${PLATFORM_EVENT_TOPIC_NAME:-PlatformEvent_v1}
+filter:
+  event_type: "MetadataChangeLogEvent_v1"
+  event:
+    aspectName: "globalTags"
+action:
+  type: "dcl_form_assignment.action:TagFormAssignmentAction"
+  config:
+    tag_to_form:
+      "urn:li:tag:dcl.poc.requires-compliance": "urn:li:form:dcl.poc.table-compliance.v1"
+datahub:
+  server: ${DATAHUB_GMS_URL:-http://127.0.0.1:8080}
+  extra_headers:
+    Authorization: ${DATAHUB_GMS_AUTHORIZATION:-}

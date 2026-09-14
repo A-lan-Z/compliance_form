@@ -1,0 +1,24 @@
+{
+  "python": "3.11.15",
+  "acryl-datahub": "1.6.0.16",
+  "acryl-datahub-actions": "1.6.0.16",
+  "gms": {
+    "acryldata/datahub": {
+      "version": "v1.3.0",
+      "commit": "94885944cfc8067dcfb34072c90824d6100cfba7"
+    }
+  },
+  "gms_image": "acryldata/datahub-gms:v1.3.0",
+  "gms_image_digests": [
+    "acryldata/datahub-gms@sha256:0d6c5fd5c9333989df941ff46ecd1c86c7190cb5ba4a65035505c87af880e33f"
+  ],
+  "wheel_sha256": "d4f892bfdafc5299bd3059d7a567ff43d519a5a97f08e3dc800b526a26439848",
+  "source_sha256": {
+    "src/dcl_form_assignment/action.py": "cfbe2ba2652e76da8a863caefc6431c87d11692333a44ba171499a4d9881ed2e",
+    "src/dcl_form_assignment/datahub.py": "4e6c06fea8b0041ce62398171178981726e9728268374cabf6338e91067dbb21",
+    "src/dcl_form_assignment/demo.py": "4f5e7ee521957b3d530c32a934b74e06e169d83660defc7a65816295228dd7b6",
+    "src/dcl_form_assignment/service.py": "b44354ea98e594879f4dd654f4a2cac8863e843480a306bb7108331bf670a59d",
+    "src/dcl_form_assignment/__init__.py": "90764a53a2317ac6f29ec920b05450fe8a80ef826b051ffade184f906ca9d8dc",
+    "src/dcl_form_assignment/events.py": "92124b2f750e806ac545e3d6c75803fcb74850a8af9d10f949d4df5d89cb1eb1"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "run": "dcl.poc.live.735c117a56e347d5a77a408759a4a98e",
+  "entity": "urn:li:dataset:(urn:li:dataPlatform:postgres,dcl.poc.live.735c117a56e347d5a77a408759a4a98e,DEV)",
+  "tag": "urn:li:tag:dcl.poc.live.735c117a56e347d5a77a408759a4a98e",
+  "form": "urn:li:form:dcl.poc.live.735c117a56e347d5a77a408759a4a98e",
+  "results": [
+    {
+      "case": "Native UI/API tag addition assigns form and preserves unrelated form",
+      "result": "PASS"
+    },
+    {
+      "case": "Replay of captured native event preserves assignment and prompt state",
+      "result": "PASS"
+    },
+    {
+      "case": "Tag removal preserves assigned forms",
+      "result": "PASS"
+    },
+    {
+      "case": "Tag re-addition does not reset existing assignments",
+      "result": "PASS"
+    },
+    {
+      "case": "Views, missing subtype and containers are excluded",
+      "result": "PASS"
+    },
+    {
+      "case": "Unrelated tag does not restore a manually removed form",
+      "result": "PASS"
+    },
+    {
+      "case": "Ingestion-origin tag addition also assigns the form",
+      "result": "PASS"
+    },
+    {
+      "case": "Native completed form and answers survive retagging",
+      "result": "PASS"
+    },
+    {
+      "case": "Restart with same consumer identity preserves completed work",
+      "result": "PASS"
+    },
+    {
+      "case": "Stale captured addition after removal does not assign",
+      "result": "PASS"
+    }
+  ]
+}
