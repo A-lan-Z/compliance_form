@@ -1,0 +1,160 @@
+{
+  "run": "dcl.poc.live.db988ae9682845519d472981c56e8414",
+  "entity": "urn:li:dataset:(urn:li:dataPlatform:postgres,dcl.poc.live.db988ae9682845519d472981c56e8414,DEV)",
+  "tag": "urn:li:tag:dcl.poc.live.db988ae9682845519d472981c56e8414",
+  "form": "urn:li:form:dcl.poc.live.db988ae9682845519d472981c56e8414",
+  "results": [
+    {
+      "case": "Native UI/API tag addition assigns form and preserves unrelated form",
+      "result": "PASS"
+    },
+    {
+      "case": "Replay of captured native event preserves assignment and prompt state",
+      "result": "PASS"
+    },
+    {
+      "case": "Tag removal preserves assigned forms",
+      "result": "PASS"
+    },
+    {
+      "case": "Tag re-addition does not reset existing assignments",
+      "result": "PASS"
+    },
+    {
+      "case": "Views, missing subtype and containers are excluded",
+      "result": "PASS"
+    },
+    {
+      "case": "Unrelated tag does not restore a manually removed form",
+      "result": "PASS"
+    },
+    {
+      "case": "Ingestion-origin tag addition also assigns the form",
+      "result": "PASS"
+    },
+    {
+      "case": "Native completed form and answers survive retagging",
+      "result": "PASS"
+    },
+    {
+      "case": "Restart with same consumer identity preserves completed work",
+      "result": "PASS"
+    },
+    {
+      "case": "Stale captured addition after removal does not assign",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on dataset",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on dataJob",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on dataFlow",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on chart",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on dashboard",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on corpuser",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on corpGroup",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on domain",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on container",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on glossaryTerm",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on glossaryNode",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on mlModel",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on mlModelGroup",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on mlFeatureTable",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on mlFeature",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on mlPrimaryKey",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on schemaField",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on dataProduct",
+      "result": "PASS"
+    },
+    {
+      "case": "Form assignment and population status on application",
+      "result": "PASS"
+    },
+    {
+      "case": "Captured owner and form replay preserve form state and populated status",
+      "result": "PASS"
+    },
+    {
+      "case": "Additional group owner does not duplicate or reset the form",
+      "result": "PASS"
+    },
+    {
+      "case": "Manual form assignment initializes status and preserves unrelated properties",
+      "result": "PASS"
+    },
+    {
+      "case": "Reattachment preserves an existing status value",
+      "result": "PASS"
+    },
+    {
+      "case": "Explicit empty property assignment is initialized",
+      "result": "PASS"
+    },
+    {
+      "case": "Blank strings in an unrestricted status property are initialized",
+      "result": "PASS"
+    },
+    {
+      "case": "Form completion does not initialize or reset status",
+      "result": "PASS"
+    },
+    {
+      "case": "Stale owner and form events are skipped after removal",
+      "result": "PASS"
+    },
+    {
+      "case": "Worker restart preserves assigned forms and populated status",
+      "result": "PASS"
+    }
+  ]
+}

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dcl-form-assignment-poc"
-version = "0.1.0"
-description = "Assign compliance forms to DataHub tables when a tag is added"
+version = "0.2.0"
+description = "Assign DataHub forms from tags and ownership and initialize form status"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["acryl-datahub-actions==1.6.0.16"]

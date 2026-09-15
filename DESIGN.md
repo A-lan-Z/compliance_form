@@ -1,52 +1,87 @@
-# Tag-triggered form assignment
+# Form assignment and status initialization
 
-## Contract
+## Rules
 
-A newly added direct table tag establishes eligibility for attaching an existing form to that same
-table. The worker checks current metadata before assignment and confirms the assignment afterward.
-It leaves ownership, answers, existing forms, and tag removals to DataHub's native workflows.
+The Action consumes MetadataChangeLog events. The configuration supports three independent rules:
+
+- `tag_to_form`: newly added direct table tags assign their mapped forms.
+- `minimum_metadata_form`: newly added user/group owners assign one configured form.
+- `form_to_property`: newly attached forms initialize their mapped string property to
+  `Awaiting population` when it is absent, has no values, or contains only blank strings.
+
+The existing tag rule remains restricted to datasets with subtype exactly `[Table]`. Owner changes
+include the initial ownership aspect created during ingestion and subsequent owner additions.
+Ownership-type changes without a new owner do not trigger assignment.
+
+Form additions are the difference between the union of incomplete/completed forms before and after
+the event. Completion, verification, answer updates, and removal do not count as new attachments.
+The owner and form rules confirm current entity existence and activity before acting. They also
+confirm the triggering owner or form still exists on the entity.
+
+## Entity support
+
+GMS 1.3 declares the `forms` and `structuredProperties` aspects on these entity types:
+
+`dataset`, `dataJob`, `dataFlow`, `chart`, `dashboard`, `corpuser`, `corpGroup`, `domain`, `container`,
+`glossaryTerm`, `glossaryNode`, `mlModel`, `mlModelGroup`, `mlFeatureTable`, `mlFeature`, `mlPrimaryKey`,
+`schemaField`, `dataProduct`, and `application`.
+
+All except `corpuser` and `schemaField` support ownership. Domain has no status aspect, so its
+activity check uses existence. These capability sets come from the
+[GMS 1.3 entity registry](https://github.com/datahub-project/datahub/blob/v1.3.0/metadata-models/src/main/resources/entity-registry.yml).
+Custom entity types require explicit support and tests.
 
 ## Components
 
-- `events.py` decodes native MetadataChangeLog events and compares current and previous tag sets.
-- `service.py` applies the configured mapping and checks current table eligibility and assignment.
-- `datahub.py` reads typed aspects and invokes the native `batchAssignForm` GraphQL mutation.
-- `action.py` adapts the Actions Framework event/context and validates configuration at startup.
-- `demo.py` provisions synthetic local definitions and tables for the interactive walkthrough.
+- `events.py` validates relevant events and extracts tag, owner, and form additions.
+- `entities.py` contains the supported entity capabilities.
+- `service.py` applies the rules and checks current eligibility.
+- `datahub.py` reads typed aspects, assigns forms, and patches one structured property.
+- `action.py` validates configuration and definitions and routes events to the service.
+- `demo.py` creates synthetic local definitions and tables.
 
-The adapter uses the framework's underlying SDK graph client. It propagates GraphQL failures and
-uses the configured identity without adding an administrator impersonation header. A true mutation
-response is followed by a forms-aspect read: some native assignment paths can skip entities while
-returning success.
+No alias is provided for the old Action class. Version 0.2.0 uses `FormAssignmentAction` and requires
+the updated event filter. Rule fields are optional, but at least one must be enabled.
 
-## Processing decisions
+## Writes and concurrency
 
-The event must add a configured direct `globalTags` tag to a dataset. Its current subtype must be
-exactly `[Table]`, its status must be active, and the tag must still be present. Missing subtype,
-views, containers, columns, inherited tags, and unrelated aspects are skipped.
+Form assignment uses `batchAssignForm` followed by a forms-aspect read-back. Existing incomplete
+and completed assignments are preserved. The read-back is required because GMS may return success
+while skipping an entity. Form assignment itself is a server read/modify/write operation and is not
+protected against independent simultaneous form writers.
 
-An assignment is skipped if the form is already incomplete or completed. The native form state is
-the replay guard; there is no local state database. This preserves progress in the sequential
-replay/restart tests. Removing a tag retains the form. If a form was manually removed, a later
-qualifying addition or replay may restore it.
+Property initialization reads current values and sends a synchronous PATCH for only the selected
+property. The GMS 1.3 property-URN patch template preserves unrelated properties under its database
+transaction. It avoids uploading a previously read copy of the whole structured-properties aspect.
+A read-back requires the property to be populated before acknowledging success.
 
-The pipeline name is the stable consumer identity. A new consumer starts at retained history with
-`auto.offset.reset: earliest`; normal restarts use committed offsets. Retention expiry can leave
-historical gaps. Adding a mapping does not rescan acknowledged events.
+An empty property is absent, has no values, or contains only blank strings. Any nonblank value is
+preserved. The property definition must have string type, allow `Awaiting population`, and
+include the current entity type. Property scope mismatches and read/write failures are errors.
 
-Missing tag/form definitions fail startup. Malformed relevant events and read/write failures are
-reported through the framework with `failure_mode: THROW`; operators repair and restart. Monitor
-pipeline health because process liveness alone does not establish that it is still processing.
+GMS 1.3 supports only `add` and `remove` patch operations. A local integration probe confirmed that
+`test` is rejected. The initial read and targeted patch are therefore separate operations: a write
+to the same property in between them can be overwritten. This Action does not provide a strict
+compare-and-set guarantee. One worker and a single initializer for the status field are the supported
+operating model. The Action never advances the field to Completed or submits form answers.
 
-## Boundaries
+## Delivery and recovery
 
-The runtime is pinned to CLI/Actions 1.6.0.16. GMS 1.3.0 and its matching frontend passed the local
-compatibility checks in VERIFICATION.md. There is no custom GMS or frontend extension in this repo.
+Existing DataHub state makes replay idempotent when assignments or property values are present.
+A failed property write does not undo the form assignment; the form event remains a separate unit
+of work that can be retried after repair. A replayed form event can initialize a subsequently cleared
+property if the form is still attached. Owner/tag removal never removes an assigned form.
 
-Run one worker. Native form assignment reads and rewrites an aspect, and the current-tag check is a
-separate operation. This does not provide compare-and-swap or transactional guarantees against
-independent concurrent writers. Local tests do not establish company authentication, authorization,
-throughput, outage recovery, or high availability.
+The Action ignores its own structured-property events. `failure_mode: THROW` propagates malformed
+relevant events, missing definitions, and external failures. Operators must monitor pipeline health,
+not only whether the CLI process is alive, and protect failed-event logs.
 
-Form definitions, Structured Properties, and assignees must be configured separately. Completion is
-DataHub's native form flow. This Action has no email sender, notification state, or review scheduler.
+The pipeline name identifies the consumer group. Restarts use committed offsets; a new group with
+`earliest` processes retained history. Changing the configuration does not scan events already
+acknowledged. Historical backfill is outside this worker's event-driven scope.
+
+## Runtime
+
+Python 3.11 and CLI/Actions 1.6.0.16 are used with GMS 1.3.0. No GMS extension is installed.
+Company authentication, authorization, workload capacity, and multi-writer operation require target
+environment validation. Local test results are recorded in [VERIFICATION.md](VERIFICATION.md).

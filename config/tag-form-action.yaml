@@ -14,13 +14,14 @@ source:
       pe: ${PLATFORM_EVENT_TOPIC_NAME:-PlatformEvent_v1}
 filter:
   event_type: "MetadataChangeLogEvent_v1"
-  event:
-    aspectName: "globalTags"
 action:
-  type: "dcl_form_assignment.action:TagFormAssignmentAction"
+  type: "dcl_form_assignment.action:FormAssignmentAction"
   config:
     tag_to_form:
       "urn:li:tag:dcl.poc.requires-compliance": "urn:li:form:dcl.poc.table-compliance.v1"
+    minimum_metadata_form: "urn:li:form:dcl.poc.minimum-metadata.v1"
+    form_to_property:
+      "urn:li:form:dcl.poc.minimum-metadata.v1": "urn:li:structuredProperty:dcl.poc.population-status"
 datahub:
   server: ${DATAHUB_GMS_URL:-http://127.0.0.1:8080}
   extra_headers:

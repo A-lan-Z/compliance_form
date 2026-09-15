@@ -11,8 +11,10 @@ from datahub_actions.api.action_graph import AcrylDataHubGraph
 from datahub_actions.pipeline.pipeline import create_action
 from datahub_actions.pipeline.pipeline_config import PipelineConfig
 
-from dcl_form_assignment.action import AssignmentConfig, TagFormAssignmentAction
+from dcl_form_assignment.action import AssignmentConfig, FormAssignmentAction
 from dcl_form_assignment.datahub import DataHubAssignments
+from dcl_form_assignment.demo import MINIMUM_FORM, STATUS_PROPERTY
+from dcl_form_assignment.entities import FORM_ENTITY_TYPES
 from dcl_form_assignment.events import added_table_tags
 
 
@@ -59,6 +61,21 @@ class Graph:
         self.aspects = {
             (TAG, s.TagPropertiesClass): s.TagPropertiesClass(name="POC tag"),
             (FORM, s.FormInfoClass): object(),
+            (MINIMUM_FORM, s.FormInfoClass): object(),
+            (
+                STATUS_PROPERTY,
+                s.StructuredPropertyDefinitionClass,
+            ): s.StructuredPropertyDefinitionClass(
+                qualifiedName="status",
+                valueType="urn:li:dataType:datahub.string",
+                entityTypes=[
+                    "urn:li:entityType:datahub." + name for name in FORM_ENTITY_TYPES
+                ],
+                allowedValues=[
+                    s.PropertyValueClass(value="Awaiting population"),
+                    s.PropertyValueClass(value="Completed"),
+                ],
+            ),
             (ENTITY, s.SubTypesClass): s.SubTypesClass(typeNames=["Table"]),
             (ENTITY, s.GlobalTagsClass): s.GlobalTagsClass(
                 tags=[s.TagAssociationClass(tag=TAG)]
@@ -69,6 +86,36 @@ class Graph:
         self.error = None
         self.result = True
         self.persist = True
+        self.entity_exists = True
+        self.emits = []
+        self.before_emit = None
+
+    def exists(self, urn):
+        if self.error:
+            raise self.error
+        return self.entity_exists
+
+    def emit_mcp(self, mcp, async_flag=None):
+        if self.error:
+            raise self.error
+        self.emits.append(mcp)
+        if self.before_emit:
+            self.before_emit()
+        if self.persist:
+            value = json.loads(mcp.aspect.value)[0]["value"]
+            current = self.aspects.get(
+                (mcp.entityUrn, s.StructuredPropertiesClass),
+                s.StructuredPropertiesClass(properties=[]),
+            )
+            current.properties = [
+                item
+                for item in current.properties
+                if item.propertyUrn != value["propertyUrn"]
+            ]
+            current.properties.append(
+                s.StructuredPropertyValueAssignmentClass.from_obj(value)
+            )
+            self.aspects[(mcp.entityUrn, s.StructuredPropertiesClass)] = current
 
     def get_aspect(self, urn, aspect):
         if self.error:
@@ -81,9 +128,12 @@ class Graph:
             raise self.error
         if self.persist:
             form = variables["input"]["formUrn"]
-            self.aspects[(ENTITY, s.FormsClass)].incompleteForms.append(
-                s.FormAssociationClass(urn=form)
+            entity = variables["input"]["entityUrns"][0]
+            forms = self.aspects.setdefault(
+                (entity, s.FormsClass),
+                s.FormsClass(incompleteForms=[], completedForms=[]),
             )
+            forms.incompleteForms.append(s.FormAssociationClass(urn=form))
         return {"batchAssignForm": self.result}
 
 
@@ -124,7 +174,7 @@ class TagEventTest(unittest.TestCase):
 class ActionTest(unittest.TestCase):
     def setUp(self):
         self.graph = Graph()
-        self.action = TagFormAssignmentAction.create(
+        self.action = FormAssignmentAction.create(
             {"tag_to_form": {TAG: FORM}},
             PipelineContext("test", AcrylDataHubGraph(self.graph)),
         )
@@ -201,7 +251,7 @@ class ActionTest(unittest.TestCase):
         self.graph.aspects[(ENTITY, s.GlobalTagsClass)].tags.append(
             s.TagAssociationClass(tag=second)
         )
-        action = TagFormAssignmentAction.create(
+        action = FormAssignmentAction.create(
             {"tag_to_form": {TAG: FORM, second: FORM}},
             PipelineContext("test", AcrylDataHubGraph(self.graph)),
         )

@@ -1,0 +1,41 @@
+{
+  "python": "3.11.15",
+  "acryl-datahub": "1.6.0.16",
+  "acryl-datahub-actions": "1.6.0.16",
+  "release": "0.2.0",
+  "validation_date": "2026-09-15",
+  "live_test_platform": "Linux",
+  "gms": {
+    "acryldata/datahub": {
+      "version": "v1.3.0",
+      "commit": "94885944cfc8067dcfb34072c90824d6100cfba7"
+    }
+  },
+  "gms_image": "acryldata/datahub-gms:v1.3.0",
+  "gms_image_digests": [
+    "acryldata/datahub-gms@sha256:0d6c5fd5c9333989df941ff46ecd1c86c7190cb5ba4a65035505c87af880e33f"
+  ],
+  "kafka_image": "confluentinc/cp-kafka:8.0.0",
+  "kafka_image_digests": [
+    "confluentinc/cp-kafka@sha256:9cdc8119cb39c45f0efa6da8e2220058020c7433e3ba3a3ce11a8006a18cb336"
+  ],
+  "wheel_filename": "dcl_form_assignment_poc-0.2.0-py3-none-any.whl",
+  "wheel_sha256": "dd7db596f58c436e1969d1037d4705e0328004c6722ebc7be0d32b879ea80f31",
+  "source_sha256": {
+    "src/dcl_form_assignment/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/dcl_form_assignment/action.py": "1cc5d219b2077189f7bae61b3276122d229fde3de88738a0225879e9e295d939",
+    "src/dcl_form_assignment/datahub.py": "f287b4b82a38242fca7b985a7e11d31c9ff9bf36ffe324f19755ba288e8de123",
+    "src/dcl_form_assignment/demo.py": "492d27114b5aaeb187523262853d1025b926136377cd8a0eaf4ba8ec22200c02",
+    "src/dcl_form_assignment/entities.py": "1ef748560412d398d398b9961975bcd6b6a3148e68cbe68cb6bb739edce34e76",
+    "src/dcl_form_assignment/events.py": "ba5fba820ca73a1b2a275cfcc21d11ceb4dd0288e8e30f10287b35b5886481e5",
+    "src/dcl_form_assignment/service.py": "59d724eca5b587c096a57d4dc0f4ceb04876886b1b9a92021d9e8742311af278",
+    "tests/live_tag_assignment.py": "301bd10741d521e0c68a4a95e9f4627f4f57ee15d0b24124c07f49e9a7d7afbb",
+    "tests/test_action.py": "3855b2484a831ceab5b2724d51658bacb88c564a0610b83a9eae5010bfbf4e26",
+    "tests/test_rules.py": "aeab84f1358e56c1997e9343089cedfc3e5d4e89e32ac9e2a64088634b1fd7d7",
+    "README.md": "146d3206fa6a597c1d140170c8cbabed8dc8cc03605a5b6521476015e1d31d8b",
+    "pyproject.toml": "911d278688148ea327d2d0a98133c306d830eb6b0deaf6327d346550bf24a789",
+    "config/tag-form-action.yaml": "710b46d65ebd6fe13794f343f8a07b1ac671f8d7385bc22a842d49d697fa8d01",
+    ".github/workflows/verify.yml": "92ba6b7e0eb7d5f8604b957912f0460ff96a9e7ef5f24d2c95b27a75bfbee714",
+    "scripts/verify.sh": "2f170873cdaae8ccd5ec7da4430233234d74545570ee6ed85ea02e01c927aa35"
+  }
+}

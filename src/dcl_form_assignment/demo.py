@@ -8,6 +8,11 @@ from datahub.ingestion.graph.client import DataHubGraph, DatahubClientConfig
 from datahub.metadata import schema_classes as s
 from datahub.metadata.urns import DatasetUrn
 
+from dcl_form_assignment.entities import FORM_ENTITY_TYPES
+
+
+MINIMUM_FORM = "urn:li:form:dcl.poc.minimum-metadata.v1"
+STATUS_PROPERTY = "urn:li:structuredProperty:dcl.poc.population-status"
 
 TAG = "urn:li:tag:dcl.poc.requires-compliance"
 FORM = "urn:li:form:dcl.poc.table-compliance.v1"
@@ -89,6 +94,78 @@ def seed_definitions(graph, tag=TAG, form=FORM, prop=PROPERTY):
         )
 
 
+def seed_automation_definitions(graph, form=MINIMUM_FORM, prop=STATUS_PROPERTY):
+    if graph.get_aspect(prop, s.StructuredPropertyDefinitionClass) is None:
+        mutation(
+            graph,
+            "createStructuredProperty",
+            "CreateStructuredPropertyInput",
+            {
+                "id": prop.removeprefix("urn:li:structuredProperty:"),
+                "qualifiedName": prop.removeprefix("urn:li:structuredProperty:"),
+                "displayName": "Population status",
+                "valueType": "urn:li:dataType:datahub.string",
+                "cardinality": "SINGLE",
+                "entityTypes": [
+                    "urn:li:entityType:datahub." + name
+                    for name in sorted(FORM_ENTITY_TYPES)
+                ],
+                "allowedValues": [
+                    {"stringValue": "Awaiting population"},
+                    {"stringValue": "Completed"},
+                ],
+            },
+            "{ urn }",
+        )
+    description_property = prop + ".description"
+    if (
+        graph.get_aspect(description_property, s.StructuredPropertyDefinitionClass)
+        is None
+    ):
+        mutation(
+            graph,
+            "createStructuredProperty",
+            "CreateStructuredPropertyInput",
+            {
+                "id": description_property.removeprefix("urn:li:structuredProperty:"),
+                "qualifiedName": description_property.removeprefix(
+                    "urn:li:structuredProperty:"
+                ),
+                "displayName": "Metadata description",
+                "valueType": "urn:li:dataType:datahub.string",
+                "cardinality": "SINGLE",
+                "entityTypes": [
+                    "urn:li:entityType:datahub." + name
+                    for name in sorted(FORM_ENTITY_TYPES)
+                ],
+            },
+            "{ urn }",
+        )
+    if graph.get_aspect(form, s.FormInfoClass) is None:
+        mutation(
+            graph,
+            "createForm",
+            "CreateFormInput",
+            {
+                "id": form.removeprefix("urn:li:form:"),
+                "name": "Minimum Metadata",
+                "description": "Local demonstration form.",
+                "type": "COMPLETION",
+                "actors": {"owners": True},
+                "prompts": [
+                    {
+                        "id": form + ".description",
+                        "title": "Provide a description",
+                        "type": "STRUCTURED_PROPERTY",
+                        "structuredPropertyParams": {"urn": description_property},
+                        "required": True,
+                    }
+                ],
+            },
+            "{ urn }",
+        )
+
+
 def seed_table(graph, entity, subtype="Table"):
     emit(
         graph,
@@ -122,6 +199,7 @@ def main():
     try:
         if args.command == "setup":
             seed_definitions(graph)
+            seed_automation_definitions(graph)
             seed_table(graph, entity)
             print(json.dumps({"entity": entity, "tag": TAG, "form": FORM}, indent=2))
         elif args.command == "tag":

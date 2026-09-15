@@ -1,157 +1,175 @@
-# DataHub tag-to-form Action
+# DataHub form assignment Action
 
-Automatically attach an existing DataHub form when a configured tag is added directly to a table.
-This repository contains the standalone Python Action, configuration, tests, and a local demo.
+Assign existing DataHub forms from table tags or ownership changes, and initialize a structured
+property when a configured form is attached.
 
-```text
-Table tag added -> Kafka metadata event -> Action checks current metadata -> GMS assigns form
-```
+| Event | Result |
+| --- | --- |
+| A configured tag is added directly to a table | Attach its mapped form if absent |
+| An owner is supplied at creation or added later | Attach the Minimum Metadata form if absent |
+| A configured form is newly attached | Set its mapped structured property to `Awaiting population` if empty |
 
-The runtime is pinned to **CLI/Actions 1.6.0.16**, with **GMS 1.3.0** verified locally. Use Python
-3.11. See [verification evidence](VERIFICATION.md) for the checks and their limits.
+The runtime is pinned to CLI/Actions **1.6.0.16**. Use **Python 3.11**. Local integration tests target
+**GMS 1.3.0**. See [VERIFICATION.md](VERIFICATION.md) for results and limits.
 
 ## Install and run
 
-Clone this repository, then run these commands from its root:
+Download the wheel and example YAML from [GitHub Releases](https://github.com/A-lan-Z/compliance_form/releases).
+From an activated Python 3.11 environment:
 
-```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
-python -m pip install .
-python -m pip check
-datahub version
+```shell
+python -m pip install dcl_form_assignment_poc-0.2.0-py3-none-any.whl
+datahub actions -c tag-form-action.yaml
 ```
 
-Configure the connections below and edit [config/tag-form-action.yaml](config/tag-form-action.yaml),
-then start the worker:
+Edit the YAML before starting the worker. Installation fetches the pinned framework dependency.
+The same commands work in PowerShell and a Linux shell. The worker must be able to reach GMS,
+Kafka, and the schema registry, and have the required credentials in its runtime environment.
+For AWS MSK IAM, log in using your company's AWS profile or use the workload's assigned AWS role.
+The DataHub token authenticates GMS requests; Kafka authentication is configured separately.
 
-```bash
-datahub actions -c config/tag-form-action.yaml
-```
-
-This command stays running and consumes events. Deploy one worker under your normal service or
-container supervisor. Keep the pipeline `name` stable across restarts so it resumes its Kafka offsets.
-The worker needs network access to GMS, Kafka brokers, and the schema registry.
+To install a checkout instead, run `python -m pip install .` from the repository root, then
+`datahub actions -c config/tag-form-action.yaml`.
 
 ### Run directly from source
 
-Installing this repository as a package is optional. Keep `src/dcl_form_assignment/` and the YAML
-configuration together, install the framework into your Python 3.11 environment, and run:
+Install `acryl-datahub-actions==1.6.0.16`, keep the source directory and YAML together, and run from
+the repository root:
 
 ```bash
-python -m pip install 'acryl-datahub-actions==1.6.0.16'
 PYTHONPATH="$PWD/src" datahub actions -c config/tag-form-action.yaml
 ```
 
-`PYTHONPATH` makes the Action's modules importable for that command. No wheel or PyPI publication
-is required. For a packaged deployment, install the wheel produced by the verification script and
-copy the YAML separately.
+In PowerShell:
 
-## Configure company deployment
+```powershell
+$env:PYTHONPATH = "$PWD/src"
+datahub actions -c config/tag-form-action.yaml
+```
 
-The example YAML maps synthetic local identifiers. Replace them with exact tag and form URNs:
+## Configure the rules
+
+The release YAML enables all three rules using synthetic local URNs. Replace them with your own:
 
 ```yaml
 action:
-  type: "dcl_form_assignment.action:TagFormAssignmentAction"
+  type: "dcl_form_assignment.action:FormAssignmentAction"
   config:
     tag_to_form:
-      "urn:li:tag:YOUR_TAG": "urn:li:form:YOUR_FORM"
+      "urn:li:tag:YOUR_TAG": "urn:li:form:YOUR_TAG_FORM"
+    minimum_metadata_form: "urn:li:form:YOUR_MINIMUM_METADATA_FORM"
+    form_to_property:
+      "urn:li:form:YOUR_WATCHED_FORM": "urn:li:structuredProperty:YOUR_STATUS_PROPERTY"
 ```
 
-Both definitions must already exist. The Action validates them at startup. If the form uses
-Structured Properties, provision those as part of the form definition. Set the form's assignees;
-for owner-assigned forms, users must be owners of the table to access completion controls.
+| Field | Meaning |
+| --- | --- |
+| `tag_to_form` | Tag URN to form URN mapping for direct table tags |
+| `minimum_metadata_form` | Form attached when a user or group owner is added |
+| `form_to_property` | Form URN to structured property URN mapping |
 
-Supply these settings through the worker's environment:
+The watched form may be the Minimum Metadata form or a different form. Each rule is optional;
+omit its field to disable it. At least one rule must be configured.
+
+Forms, tags, and structured property definitions must already exist. The Action does not create
+company definitions. Configure the Minimum Metadata form's assignees as entity owners if they
+should complete it. Its questions must apply to the intended entity types.
+
+Status properties must have the string value type, permit `Awaiting population` if allowed values
+are restricted, and be enabled for each entity type on which the rule runs. An incompatible entity
+scope fails visibly. Empty means no property assignment, no values, or only blank strings. Any
+nonblank value is preserved.
+
+### Connections
+
+The example uses these environment variables:
 
 | Variable | Purpose |
 | --- | --- |
-| `DATAHUB_GMS_URL` | GMS base URL, not the frontend URL or `/api/graphql` path |
+| `DATAHUB_GMS_URL` | GMS base URL |
 | `DATAHUB_GMS_AUTHORIZATION` | Full authorization header, normally `Bearer <token>` |
 | `KAFKA_BOOTSTRAP_SERVER` | Kafka bootstrap brokers |
 | `SCHEMA_REGISTRY_URL` | Schema registry endpoint |
-| `METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME` | Optional override for `MetadataChangeLog_Versioned_v1` |
-| `PLATFORM_EVENT_TOPIC_NAME` | Optional override for `PlatformEvent_v1` |
+| `METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME` | Override for `MetadataChangeLog_Versioned_v1` |
+| `PLATFORM_EVENT_TOPIC_NAME` | Override for `PlatformEvent_v1` |
 
-Inject credentials from your approved secret store. The YAML defaults are for local development.
-Configure Kafka and schema-registry TLS/SASL using the pinned framework's connection settings for
-your infrastructure. The GMS identity needs reads of tags, subtype/status, forms, and form
-definitions, plus form-assignment privileges. Company authentication and policies require a target
-environment test; the local version test used a no-auth GMS.
+Keep credentials in the environment or your approved secret store. Configure Kafka and schema
+registry TLS/SASL in the connection section for your infrastructure. The DataHub identity needs
+metadata reads, form-assignment permission, and permission to patch structured properties on the
+target entities. The existing Kafka metadata topic carries ownership and form changes as well as tags.
 
-The initial consumer policy is `auto.offset.reset: earliest`. With no saved offset, retained tag
-additions can trigger assignments on existing tables. Review that first-start behavior before
-production rollout. Normal restarts use committed offsets. This is not a complete historical scan.
+## Processing behavior
 
-## Behavior
+The tag rule is restricted to active datasets with subtype exactly `[Table]`. The owner and form
+rules cover the GMS 1.3 entity types that support their required aspects; see [DESIGN.md](DESIGN.md).
+Owner types are unrestricted, and user and group owners qualify. The triggering owner must still
+be present when the Action checks current metadata.
 
-- Qualifying entities are active `dataset` URNs with subtype exactly `[Table]`.
-- Only newly added direct entity tags trigger processing. Views, containers, columns, inherited
-  tags, missing/ambiguous subtypes, and changes to ownership or answers are excluded.
-- The tag must still be present when the worker checks current GMS metadata.
-- The Action attaches an existing form only when absent from both incomplete and completed forms.
-- Replay, retagging, and restart preserve existing form progress in the verified sequential cases.
-- Removing a tag leaves its form attached. A later qualifying addition/replay can restore a
-  manually removed form; there is no continuous reconciliation or backfill scan.
-- The Action does not create form definitions, assign owners, submit answers, or send notifications.
+A form already present in either incomplete or completed forms is preserved, including its answers.
+Owner removal and tag removal leave the assigned form in place. A later qualifying addition can
+restore a manually removed form. Existing entities are not periodically scanned.
 
-Processing errors propagate with `failure_mode: THROW`. Monitor pipeline processing and failed
-records; a stopped pipeline can leave the CLI process alive. Investigate and restart using the
-same pipeline identity after correcting the fault. Protect failed-event logs and avoid debug
-logging of company metadata. Normal outcomes include entity/tag URNs.
+The property rule handles assignments from the UI, ingestion, or another process. Moving a form
+between incomplete and completed states is not a new attachment. Removed forms and removed
+entities are skipped. Property updates do not trigger another rule. Clearing a property alone does
+not reinitialize it; a new form attachment is required, although a replayed attachment can also
+initialize an empty property.
 
-Run one worker. Native assignment is a read/modify/write operation and the tag check is separate
-from the assignment. Simultaneous independent writers, atomicity across these operations, throughput,
-and high availability are not established by the local tests. See [DESIGN.md](DESIGN.md).
+The worker uses a targeted server-side patch to preserve unrelated properties. It reads the status
+property immediately before writing and preserves values already present at that read. GMS 1.3
+does not support an atomic conditional property update: a concurrent write to the same property
+between the read and patch can be overwritten. Run one Action worker and avoid another writer
+initializing that status property concurrently. Form assignment also has read/modify/write
+concurrency limits.
 
-## Local walkthrough
+The sample keeps the existing pipeline name so upgrades resume committed Kafka offsets. Its
+`auto.offset.reset: earliest` setting processes retained history when there are no saved offsets,
+which can assign forms to older entities. Adding rules does not revisit already committed events.
+A complete historical backfill is a separate operation.
 
-Start a local DataHub stack with matching GMS/frontend versions, Kafka, and the schema registry.
-The defaults are GMS `127.0.0.1:8080` and Kafka `127.0.0.1:9092`.
+Failures propagate with `failure_mode: THROW`. Monitor pipeline processing and failed-event logs;
+a failed pipeline may leave the CLI process alive. Repair the fault and restart with the same
+pipeline name. Protect failed-event logs because they may contain entity metadata.
 
-1. Run `dcl-tag-form-demo setup` and copy the generated table URN. This creates synthetic metadata,
-   with no tag or assigned form, and does not connect to a database source.
-2. Start `datahub actions -c config/tag-form-action.yaml` in another activated terminal and wait for
-   its Kafka partition assignment.
-3. Open the synthetic table in DataHub and add `dcl.poc.requires-compliance` to the table's Tags.
-4. Refresh and find **Awaiting Documentation**. Add the signed-in user as an owner, expand the
-   card, and choose **Complete Documentation**.
-5. Select an answer and save. The card changes to **Documented**; the answer is a Structured
-   Property on the table.
+## Upgrade from 0.1.0
 
-The demo CLI also supports `tag --entity '<URN>'` and `status --entity '<URN>'`. Add
-`--server http://127.0.0.1:<port>` for another local GMS port and configure the worker's endpoints
-accordingly. The demo refuses non-local GMS hosts and non-synthetic table names. Ctrl+C stops the
-worker; synthetic metadata remains available for inspection.
+Stop the old worker, install the new wheel, and use the new release YAML with your connection
+settings and URNs. The Action type is now `dcl_form_assignment.action:FormAssignmentAction`.
+The old `aspectName: globalTags` filter must be removed so ownership and form events reach the Action.
+Keep the pipeline name unchanged when preserving the existing consumer offsets.
 
-## Development and verification
+## Local demo
+
+Start local DataHub with GMS/frontend 1.3, Kafka, and the schema registry. The default endpoints
+are GMS `127.0.0.1:8080` and Kafka `127.0.0.1:9092`.
+
+1. Run `dcl-tag-form-demo setup` and copy the synthetic table URN. This creates the tag form,
+   Minimum Metadata form, and their property definitions.
+2. Start `datahub actions -c config/tag-form-action.yaml` and wait for Kafka partition assignment.
+3. Add the configured tag to the table to attach the tag form.
+4. Add a user or group owner to attach Minimum Metadata and initialize Population status.
+5. Complete the forms through DataHub's native documentation controls. The Action does not change
+   Population status on completion; an existing value remains as it is.
+
+The CLI also supports `tag --entity '<URN>'` and `status --entity '<URN>'`. Use
+`--server http://127.0.0.1:<port>` for another local GMS port. The demo accepts only local servers
+and synthetic table names. It does not ingest a real database.
+
+## Development
 
 ```bash
 python -m pip install '.[dev]'
 DCL_ACTION_PYTHON=.venv/bin/python bash scripts/verify.sh
 ```
 
-The same gate runs in GitHub Actions: unit tests, Ruff lint/format checks, wheel build, and dependency
-validation. CI also verifies that the installed wheel's plugin and CLI entry point work outside the
-checkout. The wheel is `dist/dcl_form_assignment_poc-0.1.0-py3-none-any.whl`.
+The gate runs unit tests, Ruff lint/format checks, a wheel build, and dependency checks. GitHub CI
+also tests installation outside the checkout. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-For opt-in integration testing against local services:
+Install the wheel before running the integration harness:
 
 ```bash
-python tests/live_tag_assignment.py --gms-port 8080 --kafka-port 9092
+python tests/live_tag_assignment.py --gms-port 18083 --kafka-port 19093
 ```
 
-The harness uses the installed package and the Actions CLI beside its Python interpreter. It runs
-10 scenarios through real Kafka/GMS, starts and stops its own worker, creates unique synthetic
-fixtures, and prints its evidence directory under `/tmp`. Schema registry is served under GMS at
-`/schema-registry/api/`. Alternate ports support a separate local stack; company endpoints are
-not accepted by this test command.
-
-## Files
-
-- `src/dcl_form_assignment/`: Action, event decoding, assignment service, GMS adapter, local demo.
-- `config/tag-form-action.yaml`: pipeline and tag-to-form mapping.
-- `pyproject.toml`: optional package installation and pinned framework dependency.
-- `tests/` and `scripts/verify.sh`: unit and live verification.
-- `DESIGN.md` and `VERIFICATION.md`: contract, limits, and tested version evidence.
+The harness uses real local Kafka/GMS, starts and stops its own worker, and retains synthetic
+metadata and a result manifest. It accepts only loopback endpoints.
