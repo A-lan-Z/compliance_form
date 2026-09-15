@@ -11,7 +11,6 @@ class TagAddition:
 
 
 def added_table_tags(event: dict) -> tuple[TagAddition, ...]:
-    """Inspect entity tags only; table subtype is checked against current GMS state."""
     if event.get("aspectName") != "globalTags" or event.get("changeType") not in {
         "UPSERT",
         "CREATE",

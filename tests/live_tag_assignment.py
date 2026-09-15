@@ -1,5 +1,3 @@
-"""Explicit local integration run: real DataHub, Kafka and the installed Actions CLI."""
-
 import argparse
 import copy
 import json
@@ -32,7 +30,7 @@ from dcl_form_assignment.action import TagFormAssignmentAction
 from dcl_form_assignment.demo import emit, mutation, seed_definitions, seed_table
 
 
-parser = argparse.ArgumentParser(description=__doc__)
+parser = argparse.ArgumentParser(description="Local Kafka/GMS integration tests.")
 parser.add_argument("--gms-port", type=int, default=8080)
 parser.add_argument("--kafka-port", type=int, default=9092)
 args = parser.parse_args()
@@ -327,7 +325,6 @@ try:
     mutation(
         graph, "removeTag", "TagAssociationInput", {"resourceUrn": TABLE, "tagUrn": TAG}
     )
-    # A delayed captured addition is checked against current GMS state.
     action.act(
         EventEnvelope.from_json(
             json.dumps(

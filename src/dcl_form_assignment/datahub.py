@@ -55,6 +55,5 @@ class DataHubAssignments:
         )
         if result.get("batchAssignForm") is not True:
             raise RuntimeError("DataHub did not accept the form assignment")
-        # Some server paths can skip an assignment yet return true.
         if not self.has_form(entity, form):
             raise RuntimeError("DataHub assignment was not present on read-back")

@@ -1,7 +1,7 @@
 # Verification
 
-Verified 14 September 2026 after promoting the Action to the repository root and pinning the
-runtime to 1.6.0.16. No company endpoint or real data source was used.
+Release validation completed on 14 September 2026 with the 1.6.0.16 runtime and synthetic
+metadata in a local test environment.
 
 ## Release checks
 
@@ -13,10 +13,6 @@ runtime to 1.6.0.16. No company endpoint or real data source was used.
 | Installed wheel unit tests | All 18 passed with no source PYTHONPATH |
 | CLI and demo entry point | `datahub version` and `dcl-tag-form-demo --help` passed |
 | Real Kafka/GMS workflow using the installed wheel | All 10 scenarios passed |
-
-The core Action modules, YAML configuration, and unit test assertions are unchanged from the
-previous source-only version check. The live harness now resolves the repository root and installed
-CLI correctly and accepts local GMS/Kafka port arguments.
 
 ## Versions
 
@@ -48,13 +44,14 @@ python tests/live_tag_assignment.py --gms-port 18083 --kafka-port 19093
 9. Restart with the same consumer identity preserves completed work.
 10. A stale captured addition does not assign after the tag is removed.
 
-[Live result manifest](evidence/gms13-cli16-live-results.json). Both test worker instances were
-stopped by the harness. Synthetic metadata was retained for inspection.
+[Live result manifest](evidence/gms13-cli16-live-results.json).
 
-An earlier same-day browser test of the unchanged Action source also passed on the matching
-1.3.0 frontend: adding a tag showed Awaiting Documentation; saving Internal as an owner showed
-Documented; GMS readback confirmed the completed prompt and stored Structured Property. That
-browser check was separate from the installed-wheel live run above.
+## Browser test
+
+A separate source-based test on 14 September 2026 used the matching 1.3.0 frontend. Adding a tag
+showed Awaiting Documentation; saving Internal as an owner showed Documented. GMS readback
+confirmed the completed prompt and stored Structured Property. This test did not use the
+installed wheel.
 
 ## Limits
 

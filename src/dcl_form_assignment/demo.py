@@ -1,5 +1,3 @@
-"""Provision synthetic local metadata, then add a tag while the Action is running."""
-
 import argparse
 import json
 from urllib.parse import urlparse
@@ -105,7 +103,7 @@ def seed_table(graph, entity, subtype="Table"):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description="Local tag-to-form demo.")
     parser.add_argument("command", choices=["setup", "tag", "status"])
     parser.add_argument("--server", default="http://127.0.0.1:8080")
     parser.add_argument("--entity")
