@@ -1,0 +1,592 @@
+{
+  "date": "2026-10-09",
+  "result": "PASS",
+  "scope": "Per-pipeline known AuditStamp namespace adaptation; no aspect whitelist",
+  "source_sha256": "271c5eb0426935864c38c8d08530fe9d1990cb0c40e1220d178ce29bbbfb56a7",
+  "original_action_modules_unchanged": 7,
+  "runtime": {
+    "runtime": {
+      "module": "/datahub-actions/src/legacy_mcl_source.py",
+      "source_sha256": "271c5eb0426935864c38c8d08530fe9d1990cb0c40e1220d178ce29bbbfb56a7",
+      "versions": {
+        "acryl-datahub-actions": "1.3.0+docker",
+        "acryl-datahub": "1.3.0+docker",
+        "dcl-form-assignment-poc": "0.2.0"
+      }
+    },
+    "images": [
+      {
+        "container": "dcl-older-init-20261008-datahub-gms-quickstart-1",
+        "image": "\"acryldata/datahub-gms:v1.3.0.1\" \"sha256:41ab8c9eef345222d30f970465a97faf47b42469b69f1c4411112486ade66a87\""
+      },
+      {
+        "container": "dcl-older-init-20261008-legacy-system-update-1",
+        "image": "\"acryldata/datahub-upgrade:v1.2.0\" \"sha256:400054ecd50067a6afd081069d7b17d6708c684c2d75e64b1a2ef904ec5eb15e\""
+      },
+      {
+        "container": "dcl-older-init-20261008-system-update-quickstart-1",
+        "image": "\"acryldata/datahub-upgrade:v1.3.0.1\" \"sha256:fca6a515b4b853d4a0e3d9a7401c7ef521d4de774d4961526e0801c48957c26f\""
+      }
+    ],
+    "gms_version": {
+      "acryldata/datahub": {
+        "version": "v1.3.0.1",
+        "commit": "13e918ed9c978e3a1ca23ea5334f0c9713b92508"
+      }
+    },
+    "source_hash_matches": true,
+    "original_wheel_sha256": "dd7db596f58c436e1969d1037d4705e0328004c6722ebc7be0d32b879ea80f31"
+  },
+  "unit_tests": {
+    "actions_1_3_0": 57,
+    "actions_1_6_0_16": 57,
+    "installed_wheel_1_6_0_16": 57,
+    "focused_compatibility_tests": 12
+  },
+  "repository_gate": {
+    "unit_tests": 57,
+    "ruff_lint": "PASS",
+    "ruff_format": "PASS",
+    "wheel_build": "PASS",
+    "dependency_check_pinned_sdk": "PASS"
+  },
+  "native_kafka_replay": [
+    {
+      "case": "compatibility-image-built",
+      "original_wheel_unchanged": true,
+      "versions_changed": false
+    },
+    {
+      "case": "same-real-incompatible-startup-records-retained",
+      "bootstrap_legacy_record_count": 220,
+      "first_wire_sha256": "444c1eb69f5e94f53cb8bf1f89334b6265708483fa1a11e82025b27ff7b4c98c",
+      "upstream_decoder_unchanged": true
+    },
+    {
+      "case": "unmodified-earliest-control-fails",
+      "exception": "AvroTypeException",
+      "namespace": "com.linkedin.common.AuditStamp"
+    },
+    {
+      "case": "both-earliest-workers-consumed-all-history",
+      "normalized_records": 440,
+      "no_worker_crashes": true,
+      "offsets": [
+        {
+          "group": "dcl-form-implemented-earliest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 48,
+          "end": 48,
+          "lag": 0
+        },
+        {
+          "group": "dcl-form-implemented-earliest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 696,
+          "end": 696,
+          "lag": 0
+        },
+        {
+          "group": "dummy-implemented-earliest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 48,
+          "end": 48,
+          "lag": 0
+        },
+        {
+          "group": "dummy-implemented-earliest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 696,
+          "end": 696,
+          "lag": 0
+        },
+        {
+          "group": "dummy-standard-latest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 48,
+          "end": 48,
+          "lag": 0
+        },
+        {
+          "group": "dummy-standard-latest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 696,
+          "end": 696,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "case": "live-compliance-and-dummy-both-working",
+      "tag_assignments": 2,
+      "owner_minimum_form": true,
+      "status_initialized": true,
+      "dummy_events": 777,
+      "no_avro_exceptions": true,
+      "final_offsets": [
+        {
+          "group": "dcl-form-implemented-earliest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 53,
+          "end": 53,
+          "lag": 0
+        },
+        {
+          "group": "dcl-form-implemented-earliest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 704,
+          "end": 704,
+          "lag": 0
+        },
+        {
+          "group": "dummy-implemented-earliest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 53,
+          "end": 53,
+          "lag": 0
+        },
+        {
+          "group": "dummy-implemented-earliest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 704,
+          "end": 704,
+          "lag": 0
+        },
+        {
+          "group": "dummy-standard-latest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 53,
+          "end": 53,
+          "lag": 0
+        },
+        {
+          "group": "dummy-standard-latest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 704,
+          "end": 704,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "case": "ordinary-source-coexists-in-same-container",
+      "standard_latest_events": 20,
+      "ordinary_source_type": "kafka"
+    },
+    {
+      "case": "restart-resumes-commits-and-preserves-metadata",
+      "normalized_records_unchanged": true,
+      "offsets": [
+        {
+          "group": "dcl-form-implemented-earliest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 55,
+          "end": 55,
+          "lag": 0
+        },
+        {
+          "group": "dcl-form-implemented-earliest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 705,
+          "end": 705,
+          "lag": 0
+        },
+        {
+          "group": "dummy-implemented-earliest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 55,
+          "end": 55,
+          "lag": 0
+        },
+        {
+          "group": "dummy-implemented-earliest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 705,
+          "end": 705,
+          "lag": 0
+        },
+        {
+          "group": "dummy-standard-latest-20261009",
+          "topic": "PlatformEvent_v1",
+          "partition": 0,
+          "committed": 55,
+          "end": 55,
+          "lag": 0
+        },
+        {
+          "group": "dummy-standard-latest-20261009",
+          "topic": "MetadataChangeLog_Versioned_v1",
+          "partition": 0,
+          "committed": 705,
+          "end": 705,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "case": "historical-wire-records-unchanged",
+      "legacy_count": 220,
+      "all_legacy_wire_hashes_preserved": true
+    },
+    {
+      "case": "validated-fix",
+      "result": "PASS",
+      "all_versions_unchanged": true,
+      "original_wheel_unchanged": true,
+      "kafka_records_deleted": false,
+      "known_legacy_records_processed": true,
+      "scope": "Known legacy AuditStamp namespace only"
+    }
+  ],
+  "live_business_workflows": {
+    "actions_1_3_0": {
+      "run": "dcl.poc.live.e9a4f65a038a41a5ac9f097e4fe4aee3",
+      "entity": "urn:li:dataset:(urn:li:dataPlatform:postgres,dcl.poc.live.e9a4f65a038a41a5ac9f097e4fe4aee3,DEV)",
+      "tag": "urn:li:tag:dcl.poc.live.e9a4f65a038a41a5ac9f097e4fe4aee3",
+      "form": "urn:li:form:dcl.poc.live.e9a4f65a038a41a5ac9f097e4fe4aee3",
+      "results": [
+        {
+          "case": "Native UI/API tag addition assigns form and preserves unrelated form",
+          "result": "PASS"
+        },
+        {
+          "case": "Replay of captured native event preserves assignment and prompt state",
+          "result": "PASS"
+        },
+        {
+          "case": "Tag removal preserves assigned forms",
+          "result": "PASS"
+        },
+        {
+          "case": "Tag re-addition does not reset existing assignments",
+          "result": "PASS"
+        },
+        {
+          "case": "Views, missing subtype and containers are excluded",
+          "result": "PASS"
+        },
+        {
+          "case": "Unrelated tag does not restore a manually removed form",
+          "result": "PASS"
+        },
+        {
+          "case": "Ingestion-origin tag addition also assigns the form",
+          "result": "PASS"
+        },
+        {
+          "case": "Native completed form and answers survive retagging",
+          "result": "PASS"
+        },
+        {
+          "case": "Restart with same consumer identity preserves completed work",
+          "result": "PASS"
+        },
+        {
+          "case": "Stale captured addition after removal does not assign",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dataset",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dataJob",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dataFlow",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on chart",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dashboard",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on corpuser",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on corpGroup",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on domain",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on container",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on glossaryTerm",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on glossaryNode",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlModel",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlModelGroup",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlFeatureTable",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlFeature",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlPrimaryKey",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on schemaField",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dataProduct",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on application",
+          "result": "PASS"
+        },
+        {
+          "case": "Captured owner and form replay preserve form state and populated status",
+          "result": "PASS"
+        },
+        {
+          "case": "Additional group owner does not duplicate or reset the form",
+          "result": "PASS"
+        },
+        {
+          "case": "Manual form assignment initializes status and preserves unrelated properties",
+          "result": "PASS"
+        },
+        {
+          "case": "Reattachment preserves an existing status value",
+          "result": "PASS"
+        },
+        {
+          "case": "Explicit empty property assignment is initialized",
+          "result": "PASS"
+        },
+        {
+          "case": "Blank strings in an unrestricted status property are initialized",
+          "result": "PASS"
+        },
+        {
+          "case": "Form completion does not initialize or reset status",
+          "result": "PASS"
+        },
+        {
+          "case": "Stale owner and form events are skipped after removal",
+          "result": "PASS"
+        },
+        {
+          "case": "Worker restart preserves assigned forms and populated status",
+          "result": "PASS"
+        }
+      ]
+    },
+    "actions_1_6_0_16": {
+      "run": "dcl.poc.live.6c3332794ff44112ba8caad41e4a10e0",
+      "entity": "urn:li:dataset:(urn:li:dataPlatform:postgres,dcl.poc.live.6c3332794ff44112ba8caad41e4a10e0,DEV)",
+      "tag": "urn:li:tag:dcl.poc.live.6c3332794ff44112ba8caad41e4a10e0",
+      "form": "urn:li:form:dcl.poc.live.6c3332794ff44112ba8caad41e4a10e0",
+      "results": [
+        {
+          "case": "Native UI/API tag addition assigns form and preserves unrelated form",
+          "result": "PASS"
+        },
+        {
+          "case": "Replay of captured native event preserves assignment and prompt state",
+          "result": "PASS"
+        },
+        {
+          "case": "Tag removal preserves assigned forms",
+          "result": "PASS"
+        },
+        {
+          "case": "Tag re-addition does not reset existing assignments",
+          "result": "PASS"
+        },
+        {
+          "case": "Views, missing subtype and containers are excluded",
+          "result": "PASS"
+        },
+        {
+          "case": "Unrelated tag does not restore a manually removed form",
+          "result": "PASS"
+        },
+        {
+          "case": "Ingestion-origin tag addition also assigns the form",
+          "result": "PASS"
+        },
+        {
+          "case": "Native completed form and answers survive retagging",
+          "result": "PASS"
+        },
+        {
+          "case": "Restart with same consumer identity preserves completed work",
+          "result": "PASS"
+        },
+        {
+          "case": "Stale captured addition after removal does not assign",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dataset",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dataJob",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dataFlow",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on chart",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dashboard",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on corpuser",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on corpGroup",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on domain",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on container",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on glossaryTerm",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on glossaryNode",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlModel",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlModelGroup",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlFeatureTable",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlFeature",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on mlPrimaryKey",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on schemaField",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on dataProduct",
+          "result": "PASS"
+        },
+        {
+          "case": "Form assignment and population status on application",
+          "result": "PASS"
+        },
+        {
+          "case": "Captured owner and form replay preserve form state and populated status",
+          "result": "PASS"
+        },
+        {
+          "case": "Additional group owner does not duplicate or reset the form",
+          "result": "PASS"
+        },
+        {
+          "case": "Manual form assignment initializes status and preserves unrelated properties",
+          "result": "PASS"
+        },
+        {
+          "case": "Reattachment preserves an existing status value",
+          "result": "PASS"
+        },
+        {
+          "case": "Explicit empty property assignment is initialized",
+          "result": "PASS"
+        },
+        {
+          "case": "Blank strings in an unrestricted status property are initialized",
+          "result": "PASS"
+        },
+        {
+          "case": "Form completion does not initialize or reset status",
+          "result": "PASS"
+        },
+        {
+          "case": "Stale owner and form events are skipped after removal",
+          "result": "PASS"
+        },
+        {
+          "case": "Worker restart preserves assigned forms and populated status",
+          "result": "PASS"
+        }
+      ]
+    }
+  },
+  "actions13_worker_error_markers": {
+    "action-35.log": [],
+    "action-37.log": [],
+    "action-0.log": [],
+    "action-10.log": [],
+    "action-8.log": []
+  },
+  "local_test_note": "The 1.3 broad-workflow observer logged an IPv6 localhost refusal and connected successfully over IPv4; all scenarios and worker checks passed.",
+  "limits": [
+    "Company producer image and registry response not inspected",
+    "Company MSK IAM, Kafka ACLs, authentication and authorization not tested",
+    "Only the observed AuditStamp record-name alias is translated; unknown schemas remain errors"
+  ]
+}

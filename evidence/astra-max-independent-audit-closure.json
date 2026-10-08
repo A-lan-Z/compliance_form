@@ -1,0 +1,182 @@
+{
+  "date": "2026-10-09",
+  "verdict": "PASS - documentation finding closed",
+  "finding_closed": {
+    "original_file": "DESIGN.md",
+    "original_line": 94,
+    "priority": "P3",
+    "resolution": "DESIGN.md, README.md and the loose kit Deployment.txt now accurately explain that SDK validation remains at its existing stages, the adapter adds no field validation, and some malformed primitive fields are rejected during later event serialization."
+  },
+  "remaining_implementation_findings": [],
+  "verification_documentation": {
+    "result": "PASS",
+    "file": "VERIFICATION.md",
+    "section_start_line": 121,
+    "claims_checked": [
+      "57-test isolated gate with lint/format/build/pinned dependency checks",
+      "57-test Actions 1.3 suite",
+      "57-test independently rebuilt and installed wheel suite",
+      "Additional probes: 13 passes plus one inapplicable skip in 1.3, 14 passes in 1.6",
+      "38 live scenarios per runtime; original installed wheel and no source overlay in 1.3",
+      "Fresh earliest replay, ordinary-source coexistence, group restart, zero lag at replay completion",
+      "220 retained wire hashes unchanged after all suites",
+      "Unchanged code/wheel, authentic kit contents at initial audit, scoped cleanup, documentation finding and environment limitations"
+    ],
+    "matches_raw_audit_results": true
+  },
+  "reviewed_document_versions": [
+    {
+      "file": "/home/alanz/compliance_form/DESIGN.md",
+      "line": 94,
+      "sha256": "fffe334c02fd75a7d651650d037c8c0a8bf902748d2f5e9fb9f1a71fc58441a3"
+    },
+    {
+      "file": "/home/alanz/compliance_form/README.md",
+      "line": 141,
+      "sha256": "56cd5062ceec8669f37218ffda9e6e876ea1bf220350bf76aa4d91c78162db83"
+    },
+    {
+      "file": "/mnt/c/Users/alanz/AppData/Local/Temp/datahub-compliance-compat-20261009-6148e5ec/Deployment.txt",
+      "line": 32,
+      "sha256": "a70ab5fec3918a59495595a5878a2bec7b51305cb88dae2891762909e3161e03"
+    },
+    {
+      "file": "/home/alanz/compliance_form/VERIFICATION.md",
+      "line": 121,
+      "sha256": "5ed54a3ee267b5afbccf77081f207564b38a0614ca21a18d4654a65bc0ae1247"
+    }
+  ],
+  "checks": {
+    "source_sha256": "271c5eb0426935864c38c8d08530fe9d1990cb0c40e1220d178ce29bbbfb56a7",
+    "expected_source_sha256": "271c5eb0426935864c38c8d08530fe9d1990cb0c40e1220d178ce29bbbfb56a7",
+    "release_wheel_sha256": "dd7db596f58c436e1969d1037d4705e0328004c6722ebc7be0d32b879ea80f31",
+    "expected_release_wheel_sha256": "dd7db596f58c436e1969d1037d4705e0328004c6722ebc7be0d32b879ea80f31",
+    "kit_source_sha256": "271c5eb0426935864c38c8d08530fe9d1990cb0c40e1220d178ce29bbbfb56a7",
+    "code_config_and_pins": {
+      "src/dcl_form_assignment/action.py": {
+        "unchanged": true,
+        "sha256": "1cc5d219b2077189f7bae61b3276122d229fde3de88738a0225879e9e295d939"
+      },
+      "src/dcl_form_assignment/datahub.py": {
+        "unchanged": true,
+        "sha256": "f287b4b82a38242fca7b985a7e11d31c9ff9bf36ffe324f19755ba288e8de123"
+      },
+      "src/dcl_form_assignment/demo.py": {
+        "unchanged": true,
+        "sha256": "492d27114b5aaeb187523262853d1025b926136377cd8a0eaf4ba8ec22200c02"
+      },
+      "src/dcl_form_assignment/kafka_compat.py": {
+        "unchanged": true,
+        "sha256": "271c5eb0426935864c38c8d08530fe9d1990cb0c40e1220d178ce29bbbfb56a7"
+      },
+      "src/dcl_form_assignment/service.py": {
+        "unchanged": true,
+        "sha256": "59d724eca5b587c096a57d4dc0f4ceb04876886b1b9a92021d9e8742311af278"
+      },
+      "src/dcl_form_assignment/entities.py": {
+        "unchanged": true,
+        "sha256": "1ef748560412d398d398b9961975bcd6b6a3148e68cbe68cb6bb739edce34e76"
+      },
+      "src/dcl_form_assignment/__init__.py": {
+        "unchanged": true,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "src/dcl_form_assignment/events.py": {
+        "unchanged": true,
+        "sha256": "ba5fba820ca73a1b2a275cfcc21d11ceb4dd0288e8e30f10287b35b5886481e5"
+      },
+      "tests/test_rules.py": {
+        "unchanged": true,
+        "sha256": "aeab84f1358e56c1997e9343089cedfc3e5d4e89e32ac9e2a64088634b1fd7d7"
+      },
+      "tests/test_kafka_compat.py": {
+        "unchanged": true,
+        "sha256": "47d1214727967d65fbe84d83704f6fa45138178d84fd1ba20aec847233e5bbc6"
+      },
+      "tests/live_tag_assignment.py": {
+        "unchanged": true,
+        "sha256": "301bd10741d521e0c68a4a95e9f4627f4f57ee15d0b24124c07f49e9a7d7afbb"
+      },
+      "tests/test_action.py": {
+        "unchanged": true,
+        "sha256": "3855b2484a831ceab5b2724d51658bacb88c564a0610b83a9eae5010bfbf4e26"
+      },
+      "pyproject.toml": {
+        "unchanged": true,
+        "sha256": "911d278688148ea327d2d0a98133c306d830eb6b0deaf6327d346550bf24a789"
+      },
+      "scripts/verify.sh": {
+        "unchanged": true,
+        "sha256": "2f170873cdaae8ccd5ec7da4430233234d74545570ee6ed85ea02e01c927aa35"
+      },
+      "config/tag-form-action.yaml": {
+        "unchanged": true,
+        "sha256": "810d7491d5d0930f26ae1e384a1dedb7e642505692a0543f6e6bcfbb80167f76"
+      }
+    },
+    "raw_audit_copies": {
+      "Independent-audit-report.txt": {
+        "raw_sha256": "3a048ad8730f1a5d2e37444e8939cabe52e51beffd783679cfde54d9a34efd81",
+        "repo_copy_sha256": "3a048ad8730f1a5d2e37444e8939cabe52e51beffd783679cfde54d9a34efd81",
+        "kit_copy_sha256": "3a048ad8730f1a5d2e37444e8939cabe52e51beffd783679cfde54d9a34efd81"
+      },
+      "independent-audit-results.json": {
+        "raw_sha256": "7932061835c911b0b4377899d142033db10c488d17475ec7d074c5894a1ef76c",
+        "repo_copy_sha256": "7932061835c911b0b4377899d142033db10c488d17475ec7d074c5894a1ef76c",
+        "kit_copy_sha256": "7932061835c911b0b4377899d142033db10c488d17475ec7d074c5894a1ef76c"
+      }
+    },
+    "zip": {
+      "entries": [
+        "Actions-1.3-live-workflow.log",
+        "Actions-1.3-unit-tests.log",
+        "Actions-1.6-live-workflow.log",
+        "Deployment.txt",
+        "Dockerfile.fragment",
+        "Original-error-control.log",
+        "Repository-checks.log",
+        "Successful-replay.log",
+        "Test-results.json",
+        "legacy_mcl_source.py",
+        "tag-form-action.yaml"
+      ],
+      "deployment_text_current": false,
+      "source_current": true,
+      "independent_reports_included": false
+    },
+    "git_diff_check": {
+      "returncode": 0,
+      "output": ""
+    },
+    "running_containers": [
+      "dcl-compat-gms13-frontend",
+      "edw-gms13-check-datahub-gms-quickstart-1",
+      "edw-gms13-check-kafka-broker-1",
+      "edw-gms13-check-mysql-1",
+      "edw-gms13-check-opensearch-1",
+      "datahub-mysql-1",
+      "datahub-opensearch-1"
+    ]
+  },
+  "scope": {
+    "documentation_only": true,
+    "runtime_suites_repeated": false,
+    "reason": "All runtime source, tests, source-selection config, verification script, dependency pins and original released wheel are byte-identical to the audited versions; no new code concern was identified.",
+    "services_restarted": false,
+    "implementation_files_edited": false,
+    "unrelated_running_containers_preserved": true
+  },
+  "packaging_handoff": {
+    "status": "Pending planned ZIP regeneration by the parent",
+    "current_loose_kit_documents_and_raw_evidence": "Verified",
+    "existing_zip_contains_earlier_Deployment_text": true,
+    "existing_zip_contains_current_source": true,
+    "required_final_step": "Copy these closure artifacts into the kit, rebuild the ZIP, and verify every ZIP entry against the loose kit files. Preserve this raw closure and record final packaging verification separately.",
+    "is_additional_implementation_finding": false
+  },
+  "artifacts": {
+    "report": "Independent-audit-closure.txt",
+    "results": "independent-audit-closure.json",
+    "detailed_checks": "closure-checks.json"
+  }
+}

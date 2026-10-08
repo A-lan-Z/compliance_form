@@ -131,6 +131,53 @@ Failures propagate with `failure_mode: THROW`. Monitor pipeline processing and f
 a failed pipeline may leave the CLI process alive. Repair the fault and restart with the same
 pipeline name. Protect failed-event logs because they may contain entity metadata.
 
+## Fixed-version compatibility with legacy startup events
+
+If an Actions 1.3 worker fails before `act()` with
+`com.linkedin.common.AuditStamp` versus `com.linkedin.pegasus2avro.common.AuditStamp`,
+the example YAML selects the source in `src/dcl_form_assignment/kafka_compat.py`. It translates only
+that known named-union label before the installed SDK parses the MCL. It preserves the
+record data, upstream consumer configuration, filtering and offset acknowledgments.
+Errors raised by the installed SDK still propagate. The adapter adds no field validation;
+some malformed field values are rejected later during event serialization.
+
+The published 0.2.0 wheel does not contain this adapter. Use the Docker-copy option
+below with that wheel, or build and install the package from this checkout.
+
+The package source type is configured in `config/tag-form-action.yaml`:
+
+```yaml
+source:
+  type: "dcl_form_assignment.kafka_compat:LegacyAuditStampKafkaEventSource"
+  config:
+    connection:
+      # Keep your existing Kafka, registry and authentication settings.
+      consumer_config:
+        auto.offset.reset: earliest
+```
+
+To keep the existing 0.2.0 wheel and every dependency version, copy the same standalone
+module into your existing Actions image instead:
+
+```dockerfile
+COPY src/dcl_form_assignment/kafka_compat.py /datahub-actions/src/legacy_mcl_source.py
+```
+
+The official Actions 1.3 image already imports from `/datahub-actions/src`.
+For this deployment, use `source.type: "legacy_mcl_source:LegacyAuditStampKafkaEventSource"`.
+Keep the remaining YAML unchanged, including `failure_mode: THROW` and `earliest`.
+
+Deploy a fresh worker once to load the source; a crashed worker thread cannot adopt a
+code change. Keep the pipeline name to resume saved offsets. `earliest` starts at the
+oldest retained record only when the group has no valid committed offset; it does not
+rewind saved offsets. No Kafka history deletion or GMS change is needed.
+
+Startup logs `Legacy AuditStamp compatibility source enabled` with the pipeline name.
+Conversion failures log their topic, partition, offset and error type and still propagate.
+Successful translations log `Normalized legacy AuditStamp namespace` with topic,
+partition and offset, excluding metadata payloads. The adapter was tested with Actions
+1.3.0 and the pinned 1.6.0.16 SDK; see [VERIFICATION.md](VERIFICATION.md) for scope.
+
 ## Upgrade from 0.1.0
 
 Stop the old worker, install the new wheel, and use the new release YAML with your connection

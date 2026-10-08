@@ -38,6 +38,8 @@ Custom entity types require explicit support and tests.
 - `service.py` applies the rules and checks current eligibility.
 - `datahub.py` reads typed aspects, assigns forms, and patches one structured property.
 - `action.py` validates configuration and definitions and routes events to the service.
+- `kafka_compat.py` adapts the known legacy AuditStamp union name before SDK conversion,
+  only for pipelines that select its source class.
 - `demo.py` creates synthetic local definitions and tables.
 
 No alias is provided for the old Action class. Version 0.2.0 uses `FormAssignmentAction` and requires
@@ -79,6 +81,21 @@ not only whether the CLI process is alive, and protect failed-event logs.
 The pipeline name identifies the consumer group. Restarts use committed offsets; a new group with
 `earliest` processes retained history. Changing the configuration does not scan events already
 acknowledged. Historical backfill is outside this worker's event-driven scope.
+
+## Kafka source compatibility
+
+The example YAML selects `LegacyAuditStampKafkaEventSource`, a subclass of the installed Kafka
+source. It copies decoded MCL values and translates only `com.linkedin.common.AuditStamp` to the
+installed SDK's AuditStamp record name. Record fields and opaque aspect bytes are preserved.
+Kafka records, the registry, consumer settings and offset acknowledgments remain under the
+upstream implementation. Other pipelines using the ordinary source are unaffected.
+
+This adaptation runs before SDK conversion, where legacy events otherwise fail before the YAML
+filter or action can run. SDK validation stays at its existing stages; the adapter adds no field
+validation. Some malformed field values are rejected later during event serialization. Source
+conversion errors log the Kafka position and propagate; the adapter does not acknowledge a failed
+conversion. There is no aspect whitelist or automatic event discard. Retained old records and new
+records follow the same path.
 
 ## Runtime
 

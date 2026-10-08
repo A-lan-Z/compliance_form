@@ -1,0 +1,25 @@
+Independent compatibility audit — 9 October 2026
+
+Verdict: PASS. No blocking or actionable runtime implementation defects found. One nonblocking documentation correction is recommended.
+
+P3 documentation finding — DESIGN.md:94 (audited snapshot in gate-checkout/DESIGN.md).
+“Unknown namespaces and malformed records remain errors” overstates the validation stage. Both installed SDKs accept some invalid primitive fields during from_obj()/handle_mcl(), then reject them during event.as_json()/to_obj(). The adapter and ordinary current-namespace source behave identically. Recommended wording: “The adapter preserves SDK validation at its existing stages and adds no field validation. Errors raised during source conversion log the Kafka position and propagate; the adapter does not acknowledge a failed conversion.” No source-code change is required.
+
+Independent reruns:
+- Full verification gate in an isolated checkout: 57 tests, lint, formatting, wheel build and pinned-runtime dependency check passed.
+- Actions/SDK 1.3 image: all 57 repository unit tests passed.
+- Independently rebuilt wheel, installed outside the checkout: all 57 tests passed.
+- Additional independent probes: 13 passed plus one inapplicable early-filter skip in 1.3; all 14 passed in 1.6. These cover binary Avro labels, malformed and unknown payloads, delayed SDK validation, opaque bytes, nested labels, factory/plugin loading, no shared mutation, no aspect whitelist, full failure dispatch, early filtering, and inherited acknowledgment/retry modes.
+- Fresh consumer-group replay in an independently built 1.3 image: the ordinary earliest control reproduced AvroTypeException; two compatible earliest workers each processed all 220 retained legacy records; an ordinary latest source worked in the same process. All three groups reached zero lag, resumed after restart, and preserved form/status state. Replay completed at MCL offset 1235 and PlatformEvent offset 217. Later live suites added further test records after those replay workers stopped.
+- All 38 live business scenarios passed in each runtime. The 1.3 run used the original installed 0.2.0 wheel and actual Docker-copied source, with no source overlay. Tests covered all 19 entity types, tag/owner/manual form rules, completed answers, stale events, removals, property initialization/preservation and worker restarts.
+- Every one of the 220 historical wire hashes remained unchanged after all suites. Successful worker logs contain no conversion, thread or Kafka-consume error markers.
+- The Windows deployment kit and ZIP match the repository source and intended standalone YAML. The delivered YAML loads the actual /datahub-actions/src/legacy_mcl_source.py in the 1.3 image. All seven business modules match the original released wheel byte for byte.
+
+Source SHA-256: 271c5eb0426935864c38c8d08530fe9d1990cb0c40e1220d178ce29bbbfb56a7
+Original released wheel SHA-256: dd7db596f58c436e1969d1037d4705e0328004c6722ebc7be0d32b879ea80f31
+
+The audit reused the existing native-record fixture, inspected its old/current initializer image versions, and used independent groups and synthetic metadata. It did not establish the company's original producer version or test company registry/MSK authentication/ACLs. Compatibility remains limited to the observed AuditStamp label. The original wheel's dependency metadata pin remains intentionally unmatched in the existing fixed 1.3 --no-deps deployment; pip check passed in the pinned 1.6 environment.
+
+Initial probe failures were audit assumptions about the SDK validation stage, not implementation failures; those outputs are retained with the passing baseline comparison. The 1.3 observer's IPv6 localhost refusal fell back successfully to IPv4. The final machine-readable results include precise runtime paths, versions, offsets, skipped tests, logs and limitations.
+
+All audit-started test services are stopped, Kafka volumes retained, and the seven unrelated running containers are unchanged. No implementation files or release artifacts were edited. Full details: independent-audit-results.json in this folder.

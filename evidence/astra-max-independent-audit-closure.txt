@@ -1,0 +1,13 @@
+Independent audit closure — 9 October 2026
+
+PASS. The nonblocking P3 documentation finding is closed. No runtime implementation findings remain.
+
+DESIGN.md:94–98, README.md:141–142 and the Windows kit's loose Deployment.txt now accurately explain the installed SDK's existing validation stages, the absence of added field validation, and rejection of some malformed primitive fields during later serialization.
+
+VERIFICATION.md:121–153 accurately reports the independent audit: 57-test gate, 57-test 1.3 suite, 57-test rebuilt-wheel suite, 13 additional passes plus one inapplicable skip in 1.3, all 14 additional probes in 1.6, both 38-scenario live suites, fresh-group replay/coexistence/restart, 220 unchanged historical wire hashes, and relevant limitations.
+
+All eight source modules, four test files, source-selection YAML, dependency pins and verification script are byte-identical to the audited versions. The adapter retains SHA-256 271c5eb0426935864c38c8d08530fe9d1990cb0c40e1220d178ce29bbbfb56a7; the original release wheel retains SHA-256 dd7db596f58c436e1969d1037d4705e0328004c6722ebc7be0d32b879ea80f31. Repository and Windows-kit copies of the raw audit report/results match their originals byte for byte. Documentation whitespace checks passed.
+
+No live suites were rerun or services restarted for this documentation-only closure. Test services remain stopped and the seven unrelated running containers are preserved.
+
+Packaging handoff: the loose kit files are current. The existing ZIP intentionally awaits regeneration with these closure artifacts, corrected Deployment.txt and independent reports. The parent will verify the rebuilt ZIP separately; this raw closure remains unchanged.

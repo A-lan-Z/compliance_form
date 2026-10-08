@@ -2,7 +2,7 @@ name: "dcl-tag-form-assignment"
 options:
   failure_mode: "THROW"
 source:
-  type: "kafka"
+  type: "dcl_form_assignment.kafka_compat:LegacyAuditStampKafkaEventSource"
   config:
     connection:
       consumer_config:

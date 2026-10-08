@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-08",
+  "result": "PASS",
+  "scope": "Scoped Kafka source adapter for com.linkedin.common.AuditStamp named unions.",
+  "source_sha256": "ed06911b45fd4857aeecd6c1f9379d644bf4afc52331dedab9afa562fdbf8afe",
+  "source_plugin": "LegacyAuditStampKafkaEventSource",
+  "gms": "acryldata/datahub-gms:v1.3.0.1",
+  "legacy_startup_producer_in_local_reproduction": "acryldata/datahub-upgrade:v1.2.0 SystemUpdate",
+  "current_initializer": "acryldata/datahub-upgrade:v1.3.0.1",
+  "runtime": {
+    "acryl-datahub-actions": "1.3.0+docker",
+    "acryl-datahub": "1.3.0+docker",
+    "dcl-form-assignment-poc": "0.2.0"
+  },
+  "wheel_sha256": "dd7db596f58c436e1969d1037d4705e0328004c6722ebc7be0d32b879ea80f31",
+  "wheel_rebuilt_for_Docker_test": false,
+  "upstream_return_record_name_true": true,
+  "retained_legacy_startup_records": 220,
+  "first_native_record_wire_sha256": "444c1eb69f5e94f53cb8bf1f89334b6265708483fa1a11e82025b27ff7b4c98c",
+  "original_decoder_control_failures": 220,
+  "compatibility_translations_across_two_earliest_workers": 440,
+  "no_errors_in_completed_worker_logs": true,
+  "live_results": {
+    "case": "live-compliance-and-dummy-both-working",
+    "tag_assignments": 2,
+    "owner_minimum_form": true,
+    "status_initialized": true,
+    "dummy_events": 704,
+    "no_avro_exceptions": true,
+    "final_offsets": [
+      {
+        "group": "dcl-form-compat-source-earliest-v2",
+        "topic": "PlatformEvent_v1",
+        "partition": 0,
+        "committed": 37,
+        "end": 37,
+        "lag": 0
+      },
+      {
+        "group": "dcl-form-compat-source-earliest-v2",
+        "topic": "MetadataChangeLog_Versioned_v1",
+        "partition": 0,
+        "committed": 667,
+        "end": 667,
+        "lag": 0
+      },
+      {
+        "group": "dummy-compat-source-earliest-v2",
+        "topic": "PlatformEvent_v1",
+        "partition": 0,
+        "committed": 37,
+        "end": 37,
+        "lag": 0
+      },
+      {
+        "group": "dummy-compat-source-earliest-v2",
+        "topic": "MetadataChangeLog_Versioned_v1",
+        "partition": 0,
+        "committed": 667,
+        "end": 667,
+        "lag": 0
+      }
+    ]
+  },
+  "repository_gate": {
+    "unit_tests": 52,
+    "ruff_lint": "PASS",
+    "ruff_format": "PASS",
+    "wheel_build": "PASS",
+    "dependency_check": "PASS"
+  },
+  "Actions_1_3_focused_regression_tests": 7,
+  "standalone_module_import_without_pythonpath_changes": "PASS",
+  "no_version_changes": true,
+  "Kafka_history_deleted": false,
+  "company_environment_or_producer_identity_verified": false,
+  "limits": [
+    "Only the observed AuditStamp namespace mismatch is translated.",
+    "Company authentication, AWS MSK IAM and company runtime were not tested."
+  ]
+}
